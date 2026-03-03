@@ -1,9 +1,8 @@
-# 我的第一个驾驶数据分析 - 英文版
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-print("🚗 Driving Data Analysis Lab Started Successfully!")
+print(" Driving Data Analysis Lab Started Successfully!")
 print(f"Pandas version: {pd.__version__}")
 print(f"Numpy version: {np.__version__}")
 
@@ -34,7 +33,7 @@ speed[240:300] = 60 + np.random.normal(0, 1, 60)
 # Ensure speed is not negative
 speed = np.maximum(speed, 0)
 
-print(f"✅ Generated {len(time)} seconds of driving data")
+print(f"Generated {len(time)} seconds of driving data")
 print(f"Maximum speed: {speed.max():.1f} km/h")
 print(f"Average speed: {speed.mean():.1f} km/h")
 
@@ -89,7 +88,7 @@ ax3.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 
-print("🎉 Congratulations! You've just completed your first driving data analysis!")
+print("Congratulations! You've just completed your first driving data analysis!")
 print("These charts show your simulated driving session:")
 print("- Blue curve: Speed changes")
 print("- Red curve: Acceleration changes")
