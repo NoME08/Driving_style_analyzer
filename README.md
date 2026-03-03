@@ -10,10 +10,10 @@ Analuzing driving behavior usind public datasets and Python
   
 
 ## Current status
-- Create repository [x]
-- Set up Python environment [ ]
-- Download public driving dataset [ ]
-- Implement basic data visulization pipelines [ ]
+- Create repository [x] 
+- Set up Python environment [ ] 
+- Download public driving dataset [ ] 
+- Implement basic data visulization pipelines [ ] 
 
 
 ## Technology Stack
