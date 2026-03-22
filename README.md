@@ -16,6 +16,8 @@ A Python-based tool for analyzing driving behavior using public datasets and sim
 Driving_style_analyzer/
 ├── README.md                 # This file
 ├── .gitignore               # Git ignore rules
+├── LICENSE                   # MIT License
+├── requirements.txt          # Python dependencies
 ├── src/                     # Source code
 │   ├── data_loader.py      # Load and preprocess data
 │   ├── mode_detector.py    # Detect driving modes
