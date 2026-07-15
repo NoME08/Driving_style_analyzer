@@ -255,18 +255,18 @@ def make_score_trend_chart(vals, dim_name, height=260):
 # ══════════════════════════════════════════════════════════
 
 with st.sidebar:
-    st.title("🚗 Driving Style")
+    st.title("Driving Style")
     st.caption("Analyzer v3")
     st.divider()
 
     page = st.radio(
         "导航",
-        ["🏠 首页", "📤 单程分析", "🆚 行程对比", "📊 驾驶画像", "🧠 风格分类"],
+        ["首页", "单程分析", "行程对比", "驾驶画像", "风格分类"],
         label_visibility="collapsed",
     )
 
     st.divider()
-    st.caption("⚙️ 检测阈值")
+    st.caption("检测阈值")
     accel_th = st.slider("急加速 (km/h/s)", 0.5, 6.0, 2.0, 0.25)
     brake_th = st.slider("急减速 (km/h/s)", -6.0, -0.5, -2.0, 0.25)
     stop_th = st.slider("停止判定 (km/h)", 0.5, 5.0, 1.5, 0.25)
@@ -276,18 +276,18 @@ with st.sidebar:
 # PAGE 0: 首页
 # ══════════════════════════════════════════════════════════
 
-if page == "🏠 首页":
-    st.header("🏠 驾驶风格分析仪")
+if page == "首页":
+    st.header("驾驶风格分析仪")
 
     files, entries = _ensure_catalog()
 
     if not entries:
-        st.info("还没有行程数据。去「📤 单程分析」上传你的第一个 Car Scanner OBD CSV 吧。")
+        st.info("还没有行程数据。去「单程分析」上传你的第一个 Car Scanner OBD CSV 吧。")
         st.markdown("""
-        ### 🚀 快速开始
+        ### 快速开始
         1. 用 **Car Scanner** App 连接 OBD-II 记录驾驶行程
         2. 导出 CSV（需包含「车速」PID）
-        3. 拖拽到「📤 单程分析」页面
+        3. 拖拽到「单程分析」页面
         4. 自动生成分析报告、评分、风格分类
         """)
     else:
@@ -303,17 +303,17 @@ if page == "🏠 首页":
         avg_score = float(np.mean([s.get("composite", 50) for s in sc_list])) if sc_list else 50
 
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("📚 累计行程", f"{total_trips} 次")
-        c2.metric("🛣️ 累计里程", f"{total_dist:.0f} km")
-        c3.metric("⏱️ 累计时长", f"{total_dur:.0f} min")
+        c1.metric("累计行程", f"{total_trips} 次")
+        c2.metric("累计里程", f"{total_dist:.0f} km")
+        c3.metric("累计时长", f"{total_dur:.0f} min")
         lbl, _ = score_label(avg_score)
-        c4.metric("🏆 平均评分", f"{avg_score:.0f}",
+        c4.metric("平均评分", f"{avg_score:.0f}",
                   delta=lbl, delta_color="normal" if avg_score >= 55 else "inverse")
 
         st.divider()
 
         # Recent trips
-        st.subheader("📋 最近行程")
+        st.subheader("最近行程")
         recent = entries[:5]
         for fname, entry in recent:
             feat = entry.get("features", {})
@@ -322,23 +322,23 @@ if page == "🏠 首页":
             with cols[0]:
                 st.write(f"**{fname.replace('.csv','').replace('2026-','')}**")
             with cols[1]:
-                st.caption(f"⏱️ {feat.get('duration_min','?')}min")
+                st.caption(f"{feat.get('duration_min','?')}min")
             with cols[2]:
-                st.caption(f"📏 {sm.get('distance_km','?')}km")
+                st.caption(f"{sm.get('distance_km','?')}km")
             with cols[3]:
-                st.caption(f"⚡ {feat.get('aggressiveness','?')}%")
+                st.caption(f"{feat.get('aggressiveness','?')}% agg")
             with cols[4]:
                 idx_list = [i for i, (fn, _) in enumerate(entries) if fn == fname]
                 if idx_list and idx_list[0] < len(sc_list):
                     sc = sc_list[idx_list[0]]
                     sl, _ = score_label(sc.get("composite", 50))
-                    st.caption(f"🏆 {sc.get('composite',50):.0f} {sl}")
+                    st.caption(f"{sc.get('composite',50):.0f} {sl}")
 
         st.divider()
 
         # Feature correlation
         if len(all_feats) >= 3:
-            st.subheader("📈 特征相关性")
+            st.subheader("特征相关性")
             all_labels = [e[0].replace(".csv", "").replace("2026-", "")[:20] for e in entries]
             st.plotly_chart(make_corr_heatmap(all_feats, all_labels, height=420),
                             use_container_width=True)
@@ -348,8 +348,8 @@ if page == "🏠 首页":
 # PAGE 1: 单程分析
 # ══════════════════════════════════════════════════════════
 
-elif page == "📤 单程分析":
-    st.header("📤 单程分析")
+elif page == "单程分析":
+    st.header("单程分析")
 
     uploaded = st.file_uploader(
         "拖拽 Car Scanner OBD CSV 文件", type=["csv"],
@@ -379,13 +379,13 @@ elif page == "📤 单程分析":
 
         # Metrics
         c1, c2, c3, c4, c5 = st.columns(5)
-        c1.metric("⏱️ 时长", f"{s['duration_min']} min")
-        c2.metric("📏 里程", f"{s['distance_km']} km")
-        c3.metric("🚀 均速", f"{s['avg_speed']} km/h")
-        c4.metric("🔺 最高速", f"{s['max_speed']} km/h")
+        c1.metric("时长", f"{s['duration_min']} min")
+        c2.metric("里程", f"{s['distance_km']} km")
+        c3.metric("均速", f"{s['avg_speed']} km/h")
+        c4.metric("最高速", f"{s['max_speed']} km/h")
         aggro = f.get('aggressiveness', 0)
-        c5.metric("⚡ 激烈度", f"{aggro}%",
-                  delta=None if aggro < 10 else "⚠️ 偏高")
+        c5.metric("激烈度", f"{aggro}%",
+                  delta=None if aggro < 10 else "偏高")
 
         # Scoring
         _, entries = _ensure_catalog()
@@ -395,13 +395,13 @@ elif page == "📤 单程分析":
         cl, _ = score_label(sc["composite"])
 
         st.divider()
-        st.caption("📊 驾驶评分（相对个人历史百分位）")
+        st.caption("驾驶评分（相对个人历史百分位）")
         sc1, sc2, sc3, sc4 = st.columns(4)
-        sc1.metric("🏆 综合评分", f"{sc['composite']}",
+        sc1.metric("综合评分", f"{sc['composite']}",
                    delta=cl, delta_color="normal" if sc["composite"] >= 55 else "inverse")
-        sc2.metric("🛡️ 安全性", f"{sc['safety']}")
-        sc3.metric("🏓 平稳性", f"{sc['smoothness']}")
-        sc4.metric("⛽ 经济性", f"{sc['efficiency']}")
+        sc2.metric("安全性", f"{sc['safety']}")
+        sc3.metric("平稳性", f"{sc['smoothness']}")
+        sc4.metric("经济性", f"{sc['efficiency']}")
 
         # Speed chart
         st.subheader("速度曲线（驾驶模式着色）")
@@ -426,19 +426,19 @@ elif page == "📤 单程分析":
 
         # Export
         csv_data = _to_csv_bytes([f], [sc], [filename])
-        st.download_button("📥 导出 CSV", data=csv_data,
+        st.download_button("导出 CSV", data=csv_data,
                            file_name=filename.replace(".csv", "_analysis.csv"),
                            mime="text/csv")
     else:
-        st.info("👆 上传 Car Scanner OBD CSV 文件开始分析。")
+        st.info("上传 Car Scanner OBD CSV 文件开始分析。")
 
 
 # ══════════════════════════════════════════════════════════
 # PAGE 2: 行程对比
 # ══════════════════════════════════════════════════════════
 
-elif page == "🆚 行程对比":
-    st.header("🆚 行程对比")
+elif page == "行程对比":
+    st.header("行程对比")
 
     files = scan_data_files()
     if len(files) < 2:
@@ -511,7 +511,7 @@ elif page == "🆚 行程对比":
             # Export
             sc_list = score_all(feats)
             csv_data = _to_csv_bytes(feats, sc_list, selected)
-            st.download_button("📥 导出对比 CSV", data=csv_data,
+            st.download_button("导出对比 CSV", data=csv_data,
                                file_name="trip_comparison.csv", mime="text/csv")
 
 
@@ -519,8 +519,8 @@ elif page == "🆚 行程对比":
 # PAGE 3: 驾驶画像
 # ══════════════════════════════════════════════════════════
 
-elif page == "📊 驾驶画像":
-    st.header("📊 驾驶画像")
+elif page == "驾驶画像":
+    st.header("驾驶画像")
 
     files, entries = _ensure_catalog()
 
@@ -569,8 +569,8 @@ elif page == "📊 驾驶画像":
         st.subheader("评分趋势")
         sc_list = score_all(all_feats)
         score_dims = [
-            ("composite", "🏆 综合"), ("safety", "🛡️ 安全"),
-            ("smoothness", "🏓 平稳"), ("efficiency", "⛽ 经济"),
+            ("composite", "综合"), ("safety", "安全"),
+            ("smoothness", "平稳"), ("efficiency", "经济"),
         ]
         cols = st.columns(4)
         for i, (dim, name) in enumerate(score_dims):
@@ -595,12 +595,12 @@ elif page == "📊 驾驶画像":
 
         # Export
         csv_data = _to_csv_bytes(all_feats, sc_list, [e[0] for e in entries])
-        st.download_button("📥 导出全部 CSV", data=csv_data,
+        st.download_button("导出全部 CSV", data=csv_data,
                            file_name="all_trips_analysis.csv", mime="text/csv")
 
         # File management
         st.divider()
-        with st.expander("📁 管理行程文件"):
+        with st.expander("管理行程文件"):
             catalog = load_catalog()
             for f in files:
                 c1, c2, c3 = st.columns([3, 1, 1])
@@ -610,7 +610,7 @@ elif page == "📊 驾驶画像":
                     dist = entry.get("summary", {}).get("distance_km", "?")
                     st.write(f"**{f['name']}** · {dur}min · {dist}km · {f['size_kb']}KB")
                 with c2:
-                    if st.button("📋 查看", key=f"open_{f['name']}"):
+                    if st.button("查看", key=f"open_{f['name']}"):
                         try:
                             res = run_pipeline(f["path"], accel_th, brake_th, stop_th)
                             st.session_state["last_result"] = res
@@ -619,7 +619,7 @@ elif page == "📊 驾驶画像":
                         except Exception:
                             st.error("加载失败")
                 with c3:
-                    if st.button("🗑️", key=f"del_{f['name']}"):
+                    if st.button("删除", key=f"del_{f['name']}"):
                         delete_file(f["name"])
                         st.rerun()
 
@@ -628,8 +628,8 @@ elif page == "📊 驾驶画像":
 # PAGE 4: 风格分类
 # ══════════════════════════════════════════════════════════
 
-elif page == "🧠 风格分类":
-    st.header("🧠 驾驶风格分类")
+elif page == "风格分类":
+    st.header("驾驶风格分类")
     st.caption("基于 K-Means 无监督聚类，自动发现驾驶风格模式。")
 
     files, entries = _ensure_catalog()

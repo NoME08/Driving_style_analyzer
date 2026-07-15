@@ -1,8 +1,18 @@
 # 🚗 Driving Style Analyzer
 
-OBD-II driving style analysis toolkit. Analyze driving modes, trip statistics, scores, and style classification from Car Scanner CSV data.
+*An open, interpretable toolkit that turns raw OBD-II data into actionable insights about how you drive.*
+
+Most driving style analysis tools are black boxes—they give you a score but don't tell you why. This project is my attempt to build something transparent: every score is traceable to a specific driving behavior, every classification comes with an explanation.
+
+> **Tech Stack:** Python · Streamlit · Pandas · Scikit-learn (K-Means, PCA) · Plotly · Matplotlib
 
 [中文](./README_CN.md)
+
+![screenshot](images/screenshot.png)
+
+## 📡 Data Source
+
+All trip data in `data/` is **real-world driving data collected from my own vehicle** via a Bluetooth OBD-II adapter and the [Car Scanner](https://www.carscanner.info/) app. Each CSV records second-by-second data including speed, RPM, throttle position, fuel rate, and GPS coordinates. This is not a synthetic dataset—every aggressive lane change, rush-hour crawl, and late-night highway cruise in here was me behind the wheel.
 
 ## ✨ Features
 
@@ -22,7 +32,7 @@ OBD-II driving style analysis toolkit. Analyze driving modes, trip statistics, s
 
 ### 📊 Data Support
 - Car Scanner OBD CSV exports (semicolon-delimited)
-- Auto-detects 「车速」,「发动机转速」,「节气门位置」and other PIDs
+- Auto-detects speed, RPM, throttle position and other PIDs
 - Compatible with both GPS and OBD speed sources
 
 ## 🚀 Quick Start
@@ -32,7 +42,7 @@ git clone https://github.com/yourusername/Driving_style_analyzer.git
 cd Driving_style_analyzer
 
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 streamlit run streamlit_app.py
@@ -56,7 +66,8 @@ Driving_style_analyzer/
 │   ├── session_store.py      # Trip catalog management
 │   ├── visualizer.py         # matplotlib static charts (CLI)
 │   └── main.py               # CLI analysis entry point
-├── data/                     # Trip CSV data (gitignored)
+├── data/                     # Real-world trip CSV data
+├── images/                   # Screenshots
 └── output/                   # CLI-generated charts (gitignored)
 ```
 

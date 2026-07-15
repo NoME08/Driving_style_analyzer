@@ -5,7 +5,6 @@ venv/
 *.pyc
 __pycache__/
 output/
-data/*.csv
 data/_catalog.json
 data/annotations/
 Mock/

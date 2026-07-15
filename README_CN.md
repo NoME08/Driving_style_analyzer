@@ -1,8 +1,18 @@
 # 🚗 Driving Style Analyzer
 
-基于 OBD-II 数据的驾驶风格分析工具。通过 Car Scanner 采集的行车数据，自动分析驾驶模式、行程特征、评分和风格分类。
+*一个开放、可解释的工具，把 OBD-II 原始数据变成关于你驾驶方式的有用洞察。*
+
+大多数驾驶风格分析工具都是黑盒子——给你一个分数但不告诉你怎么来的。这个项目的目标是构建透明的工具：每个评分都能追溯到具体驾驶行为，每种分类都有解释。
+
+> **技术栈：** Python · Streamlit · Pandas · Scikit-learn (K-Means, PCA) · Plotly · Matplotlib
 
 [English](./README.md)
+
+![screenshot](images/screenshot.png)
+
+## 📡 数据来源
+
+`data/` 目录下所有行程数据都是**我自己开车采集的真实数据**，通过蓝牙 OBD-II 适配器 + [Car Scanner](https://www.carscanner.info/) App 记录。每个 CSV 包含秒级数据：车速、发动机转速、节气门位置、燃油率、GPS 坐标。这不是合成数据集——每一次激进变道、早晚高峰蠕行、深夜高速巡航，方向盘后面都是我本人。
 
 ## ✨ 功能
 
@@ -56,7 +66,8 @@ Driving_style_analyzer/
 │   ├── session_store.py      # 行程目录管理
 │   ├── visualizer.py         # matplotlib 静态图（CLI 用）
 │   └── main.py               # CLI 分析入口
-├── data/                     # 行程 CSV 数据（gitignored）
+├── data/                     # 真实驾驶 CSV 数据
+├── images/                   # 截图
 └── output/                   # CLI 生成的图表（gitignored）
 ```
 
