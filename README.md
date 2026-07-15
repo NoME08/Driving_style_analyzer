@@ -2,6 +2,8 @@
 
 OBD-II driving style analysis toolkit. Analyze driving modes, trip statistics, scores, and style classification from Car Scanner CSV data.
 
+[中文](./README_CN.md)
+
 ## ✨ Features
 
 ### 🌐 Web Interface (Streamlit)
