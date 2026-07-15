@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-UDDS Urban Driving Cycle Analysis - Refactored Version
+Driving Style Analyzer - Main Pipeline
 
-This script analyzes UDDS driving data using modular components in the src/ directory.
+Usage:
+    python src/main.py                          # uses data/udds.csv (default)
+    python src/main.py path/to/your_data.csv    # uses your own CSV
 """
 
 import sys
@@ -22,14 +24,19 @@ import matplotlib.pyplot as plt
 def main():
     """Main analysis pipeline."""
     print("=" * 70)
-    print("UDDS Urban Driving Cycle Analysis (Refactored)")
+    print("Driving Style Analyzer")
     print("=" * 70)
 
     # 1. Load and preprocess data
     print("\n[1] Loading data...")
-    # Build path to data file relative to this script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(script_dir, "..", "data", "udds.csv")
+
+    # Accept CSV path from command line, or default to UDDS
+    if len(sys.argv) > 1:
+        data_path = sys.argv[1]
+    else:
+        print("Usage: python src/main.py <path_to_csv>")
+        sys.exit(1)
+
     df = load_data(data_path)
     print_summary(df)
 
@@ -52,18 +59,21 @@ def main():
 
     # Build save paths relative to this script
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    main_plot_path = os.path.join(script_dir, '..', 'output', 'udds_metric_analysis.png')
-    detailed_plot_path = os.path.join(script_dir, '..', 'output', 'udds_detailed_statistics.png')
+    main_plot_path = os.path.join(script_dir, '..', 'output', 'metric_analysis.png')
+    detailed_plot_path = os.path.join(script_dir, '..', 'output', 'detailed_statistics.png')
+
+    # Derive input file stem for plot titles
+    input_name = os.path.splitext(os.path.basename(data_path))[0]
 
     # Main analysis plot
-    plot_main_analysis(df, trips_df, save_path=main_plot_path)
+    plot_main_analysis(df, trips_df, save_path=main_plot_path, title_suffix=input_name)
 
     # Detailed statistics plot
-    plot_detailed_statistics(df, trips_df, save_path=detailed_plot_path)
+    plot_detailed_statistics(df, trips_df, save_path=detailed_plot_path, title_suffix=input_name)
 
     # 6. Print key metrics
     print("\n" + "=" * 70)
-    print("UDDS Urban Driving Cycle Key Metrics")
+    print(f"Key Metrics — {input_name}")
     print("=" * 70)
     print(f"Total duration:        {df['time_sec'].max():.0f} seconds ({df['time_sec'].max() / 60:.1f} minutes)")
     print(f"Total distance:        {trips_summary['total_distance_km']:.2f} km")
@@ -80,8 +90,8 @@ def main():
 
     print("\nAnalysis complete!")
     print("Visualizations saved as:")
-    print("  - Day_02/udds_metric_analysis.png")
-    print("  - Day_02/udds_detailed_statistics.png")
+    print(f"  - output/metric_analysis.png")
+    print(f"  - output/detailed_statistics.png")
 
     # Show plots (this will block until plots are closed)
     print("\nDisplaying plots...")

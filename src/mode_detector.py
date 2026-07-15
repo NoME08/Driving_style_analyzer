@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def detect_driving_modes(df, accel_threshold=3.0, brake_threshold=-3.0, stop_threshold=0.8):
+def detect_driving_modes(df, accel_threshold=2.0, brake_threshold=-2.0, stop_threshold=1.5):
     """
     Detect driving modes based on acceleration and speed thresholds.
 
@@ -125,14 +125,3 @@ def get_mode_durations(df, time_col='time_sec'):
     )
 
     return mode_durations
-
-
-# Example usage
-if __name__ == "__main__":
-    # Test the functions
-    from data_loader import load_data
-
-    print("Testing mode_detector module...")
-    df = load_data()
-    df = detect_driving_modes(df)
-    print_mode_statistics(df)

@@ -1,165 +1,97 @@
-# Driving Style Analyzer
+# 🚗 Driving Style Analyzer
 
-A Python-based tool for analyzing driving behavior using public datasets and simulated data. This project processes driving data to identify driving modes, calculate trip statistics, and visualize driving patterns.
+OBD-II driving style analysis toolkit. Analyze driving modes, trip statistics, scores, and style classification from Car Scanner CSV data.
 
-## Features
+## ✨ Features
 
-- **Data Loading**: Load and preprocess driving data from CSV files
-- **Driving Mode Detection**: Identify stop, acceleration, deceleration, and cruise modes based on speed and acceleration thresholds
-- **Trip Analysis**: Segment driving data into individual trips and calculate statistics (duration, distance, average speed, etc.)
-- **Visualization**: Create comprehensive plots showing speed profiles, acceleration patterns, trip statistics, and driving mode distributions
-- **Modular Architecture**: Well-structured codebase with separate modules for data loading, mode detection, trip analysis, and visualization
+### 🌐 Web Interface (Streamlit)
+- **Home** — Dashboard with cumulative stats, recent trips, feature correlation matrix
+- **Single Trip** — Upload CSV to get speed curve (mode-colored), score cards, trip details, one-click CSV export
+- **Compare** — Multi-select 2–4 trips; speed overlay, radar chart, metrics table, correlation heatmap
+- **Profile** — Latest vs average radar chart, feature/score trends, full trip table, batch export
+- **Classifier** — K-Means clustering + PCA visualization, auto-labeling, centroid analysis
 
-## Project Structure
+### 🧠 Analysis Engine
+| Module | Purpose |
+|---|---|
+| `features.py` | 26-dimensional feature extraction (speed, acceleration, modes, engine) |
+| `style_classifier.py` | Unsupervised K-Means clustering + PCA + `classify_new()` |
+| `scorer.py` | Percentile-based scoring (safety / smoothness / efficiency) |
+
+### 📊 Data Support
+- Car Scanner OBD CSV exports (semicolon-delimited)
+- Auto-detects 「车速」,「发动机转速」,「节气门位置」and other PIDs
+- Compatible with both GPS and OBD speed sources
+
+## 🚀 Quick Start
+
+```bash
+git clone https://github.com/yourusername/Driving_style_analyzer.git
+cd Driving_style_analyzer
+
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+streamlit run streamlit_app.py
+```
+
+Open `http://localhost:8501`, drag-and-drop a Car Scanner CSV.
+
+## 📁 Project Structure
 
 ```
 Driving_style_analyzer/
-├── README.md                 # This file
-├── .gitignore               # Git ignore rules
-├── LICENSE                   # MIT License
-├── requirements.txt          # Python dependencies
-├── src/                     # Source code
-│   ├── data_loader.py      # Load and preprocess data
-│   ├── mode_detector.py    # Detect driving modes
-│   ├── trip_analyzer.py    # Identify trips and calculate statistics
-│   ├── visualizer.py       # Create visualizations
-│   └── main.py             # Main analysis pipeline
-├── Mock/                    # Mock data and analysis
-│   ├── 01_Mock_Analysis.py # Simulated driving data analysis
-│   └── 01_Mock_Analysis.ipynb
-├── data/                    # Data files
-│   └── udds.csv            # UDDS driving cycle data
-├── output/                  # Generated outputs
-│   ├── udds_metric_analysis.png
-│   └── udds_detailed_statistics.png
-└── venv/                   # Python virtual environment (ignored)
+├── streamlit_app.py          # Web UI entry (5 pages)
+├── requirements.txt
+├── src/
+│   ├── data_loader.py        # CSV parser (Car Scanner + UDDS)
+│   ├── mode_detector.py      # Driving mode classification
+│   ├── trip_analyzer.py      # Trip segmentation + statistics
+│   ├── features.py           # 26-dim feature extraction
+│   ├── scorer.py             # Percentile-based scoring engine
+│   ├── style_classifier.py   # K-Means clustering + PCA + auto-label
+│   ├── session_store.py      # Trip catalog management
+│   ├── visualizer.py         # matplotlib static charts (CLI)
+│   └── main.py               # CLI analysis entry point
+├── data/                     # Trip CSV data (gitignored)
+└── output/                   # CLI-generated charts (gitignored)
 ```
 
-## Installation
+## 🔧 Detection Thresholds
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/Driving_style_analyzer.git
-   cd Driving_style_analyzer
-   ```
+Adjustable in the sidebar:
+- **Hard acceleration** — default > +2.0 km/h/s
+- **Hard braking** — default < -2.0 km/h/s
+- **Stop threshold** — default < 1.5 km/h
 
-2. **Set up Python environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+## 📈 Scoring
 
-3. **Install dependencies**
+Each trip is percentile-ranked against personal driving history:
 
-   Option 1: Install individual packages:
-   ```bash
-   pip install pandas numpy matplotlib
-   ```
+| Dimension | Weight | Based on |
+|---|---|---|
+| 🛡️ Safety | 35% | Hard brake %, hard accel %, accel volatility |
+| 🏓 Smoothness | 35% | Accel magnitude, speed variation |
+| ⛽ Efficiency | 30% | Stop %, cruise %, RPM/throttle stability |
 
-   Option 2: Install from requirements file:
-   ```bash
-   pip install -r requirements.txt
-   ```
+> 50 = historical median. Labels: ≥85 Excellent, ≥70 Great, ≥55 Good, ≥40 Fair, <40 Needs Work.
 
-## Usage
+## 🧠 Style Classification
 
-### Running the Main Analysis Pipeline
+K-Means clustering identifies driving styles:
+- **Aggressive** — Frequent hard accel, spirited city driving
+- **Highway Cruise** — High highway %, relatively smooth
+- **City Congestion** — High stop %, low average speed
 
-Execute the main analysis script to process the UDDS driving cycle data:
+New trips are auto-classified via `classify_new()`.
 
-```bash
-cd src
-python main.py
-```
+## 📦 Dependencies
 
-This will:
-1. Load the UDDS driving data from `data/udds.csv`
-2. Detect driving modes (stop, cruise, acceleration, deceleration)
-3. Identify individual trips and calculate statistics
-4. Generate visualizations saved to `output/` directory
-5. Display key metrics in the terminal
+- Python ≥ 3.9
+- streamlit, plotly, pandas, numpy
+- scikit-learn, matplotlib
 
-### Running Mock Analysis
+## 📄 License
 
-For a quick demonstration with simulated data:
-
-```bash
-cd Mock
-python 01_Mock_Analysis.py
-```
-
-### Using Individual Modules
-
-You can also import and use individual modules in your own Python scripts:
-
-```python
-from src.data_loader import load_data
-from src.mode_detector import detect_driving_modes
-from src.trip_analyzer import identify_trips, calculate_trip_statistics
-from src.visualizer import plot_main_analysis
-
-# Load data
-df = load_data("../data/udds.csv")
-
-# Detect driving modes
-df = detect_driving_modes(df)
-
-# Identify trips
-df = identify_trips(df)
-trips_df, summary = calculate_trip_statistics(df)
-
-# Create visualization
-fig = plot_main_analysis(df, trips_df, save_path="analysis.png")
-```
-
-## Output Examples
-
-The analysis generates two main visualizations:
-
-1. **Main Analysis Plot** (`udds_metric_analysis.png`):
-   - Speed profile with driving modes color-coded
-   - Acceleration profile with threshold lines
-   - Cumulative distance over time
-
-2. **Detailed Statistics Plot** (`udds_detailed_statistics.png`):
-   - Speed and acceleration distributions
-   - Trip durations and distances
-   - Driving mode statistics
-
-## Technology Stack
-
-| Category | Tools & Resources |
-| :--- | :--- |
-| **Language** | Python 3.x |
-| **Data Analysis** | pandas, numpy |
-| **Visualization** | matplotlib |
-| **Version Control** | Git & GitHub |
-| **Datasets** | UDDS (EPA Standard Driving Cycle) |
-| **Development** | Virtual Environments, Jupyter Notebooks |
-
-## Key Metrics Analyzed
-
-- **Speed Analysis**: Maximum, minimum, and average speed
-- **Acceleration Analysis**: Hard acceleration (>3 km/h/s) and hard braking (<-3 km/h/s) events
-- **Trip Statistics**: Number of trips, total distance, average trip duration
-- **Driving Mode Distribution**: Percentage of time spent in stop, cruise, acceleration, and deceleration modes
-- **Aggressiveness Score**: Metric based on frequency of hard acceleration/braking events
-
-## Current Status
-
-- [x] Create repository and set up Python environment
-- [x] Implement mock data analysis with simulated driving data
-- [x] Develop modular analysis pipeline (data loading, mode detection, trip analysis, visualization)
-- [x] Analyze real UDDS driving cycle data
-- [x] Generate comprehensive visualizations
-- [ ] Add support for additional driving datasets (FTP-75, etc.)
-- [ ] Implement machine learning for driving style classification
-- [ ] Add real-time OBD-II data integration
-
-## License
-
-This project is open source and available under the MIT License.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+MIT

@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 
 
-def plot_main_analysis(df, trips_df=None, total_distance=None, figsize=(15, 10), save_path=None):
+def plot_main_analysis(df, trips_df=None, total_distance=None, figsize=(15, 10),
+                      save_path=None, title_suffix=None):
     """
     Create main analysis visualization with 3 subplots.
 
@@ -18,7 +18,9 @@ def plot_main_analysis(df, trips_df=None, total_distance=None, figsize=(15, 10),
     figsize : tuple
         Figure size (width, height) in inches
     save_path : str, optional
-        Path to save the figure (e.g., 'udds_analysis.png')
+        Path to save the figure (e.g., 'analysis.png')
+    title_suffix : str, optional
+        Suffix for the figure title (e.g., filename)
 
     Returns:
     --------
@@ -26,8 +28,10 @@ def plot_main_analysis(df, trips_df=None, total_distance=None, figsize=(15, 10),
         The created figure
     """
     fig = plt.figure(figsize=figsize)
-    fig.suptitle('UDDS Urban Driving Cycle Analysis (Metric Units)',
-                 fontsize=14, fontweight='bold')
+    title = 'Driving Cycle Analysis'
+    if title_suffix:
+        title += f' — {title_suffix}'
+    fig.suptitle(title, fontsize=14, fontweight='bold')
 
     # Calculate total distance if not provided
     if total_distance is None:
@@ -109,7 +113,8 @@ def plot_main_analysis(df, trips_df=None, total_distance=None, figsize=(15, 10),
     return fig
 
 
-def plot_detailed_statistics(df, trips_df, figsize=(14, 10), save_path=None):
+def plot_detailed_statistics(df, trips_df, figsize=(14, 10), save_path=None,
+                            title_suffix=None):
     """
     Create detailed statistics visualization with 2x2 subplots.
 
@@ -123,6 +128,8 @@ def plot_detailed_statistics(df, trips_df, figsize=(14, 10), save_path=None):
         Figure size (width, height) in inches
     save_path : str, optional
         Path to save the figure
+    title_suffix : str, optional
+        Suffix for the figure title (e.g., filename)
 
     Returns:
     --------
@@ -130,8 +137,10 @@ def plot_detailed_statistics(df, trips_df, figsize=(14, 10), save_path=None):
         The created figure
     """
     fig, axes = plt.subplots(2, 2, figsize=figsize)
-    fig.suptitle('UDDS Driving Cycle Detailed Statistics',
-                 fontsize=14, fontweight='bold')
+    title = 'Driving Cycle Detailed Statistics'
+    if title_suffix:
+        title += f' — {title_suffix}'
+    fig.suptitle(title, fontsize=14, fontweight='bold')
 
     # 1. Speed distribution histogram
     ax = axes[0, 0]
@@ -192,73 +201,3 @@ def plot_detailed_statistics(df, trips_df, figsize=(14, 10), save_path=None):
     return fig
 
 
-def plot_simple_speed_profile(df, figsize=(12, 6), save_path=None):
-    """
-    Create a simple speed profile plot.
-
-    Parameters:
-    -----------
-    df : pandas.DataFrame
-        DataFrame with columns: time_sec, speed_kmh
-    figsize : tuple
-        Figure size
-    save_path : str, optional
-        Path to save the figure
-
-    Returns:
-    --------
-    matplotlib.figure.Figure
-        The created figure
-    """
-    fig, ax = plt.subplots(figsize=figsize)
-
-    ax.plot(df['time_sec'] / 60, df['speed_kmh'], 'b-', linewidth=1.5)
-    ax.set_xlabel('Time (minutes)')
-    ax.set_ylabel('Speed (km/h)')
-    ax.set_title('UDDS Driving Cycle Speed Profile')
-    ax.grid(True, alpha=0.3)
-    ax.fill_between(df['time_sec'] / 60, 0, df['speed_kmh'],
-                    alpha=0.2, color='blue')
-
-    if save_path:
-        plt.savefig(save_path, dpi=300)
-        print(f"Figure saved to {save_path}")
-
-    return fig
-
-
-def show_all_plots(df, trips_df):
-    """
-    Convenience function to create and show all standard visualizations.
-
-    Parameters:
-    -----------
-    df : pandas.DataFrame
-        DataFrame with driving data and modes
-    trips_df : pandas.DataFrame
-        DataFrame with trip statistics
-    """
-    fig1 = plot_main_analysis(df, trips_df)
-    fig2 = plot_detailed_statistics(df, trips_df)
-    plt.show()
-
-
-# Example usage
-if __name__ == "__main__":
-    # Test the functions
-    from data_loader import load_data
-    from mode_detector import detect_driving_modes
-    from trip_analyzer import identify_trips, calculate_trip_statistics
-
-    print("Testing visualizer module...")
-    df = load_data()
-    df = detect_driving_modes(df)
-    df = identify_trips(df)
-    trips_df, summary = calculate_trip_statistics(df)
-
-    # Create visualizations
-    fig1 = plot_main_analysis(df, trips_df, save_path='test_main_analysis.png')
-    fig2 = plot_detailed_statistics(df, trips_df, save_path='test_detailed_stats.png')
-
-    print("Visualizations created. Close the figures to continue...")
-    plt.show()

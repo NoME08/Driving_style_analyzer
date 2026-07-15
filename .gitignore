@@ -4,4 +4,9 @@ venv/
 .ipynb_checkpoints/
 *.pyc
 __pycache__/
-output
+output/
+data/*.csv
+data/_catalog.json
+data/annotations/
+Mock/
+_*.py

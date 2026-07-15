@@ -183,18 +183,3 @@ def get_detailed_trip_report(trips_df):
 
     report_lines.append("=" * 60)
     return "\n".join(report_lines)
-
-
-# Example usage
-if __name__ == "__main__":
-    # Test the functions
-    from data_loader import load_data
-    from mode_detector import detect_driving_modes
-
-    print("Testing trip_analyzer module...")
-    df = load_data()
-    df = detect_driving_modes(df)
-    df = identify_trips(df)
-    trips_df, summary = calculate_trip_statistics(df)
-    print_trip_summary(trips_df, summary)
-    print(get_detailed_trip_report(trips_df))
